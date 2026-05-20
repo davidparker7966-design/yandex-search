@@ -1,0 +1,52 @@
+# yandex-search
+
+> CLI for Yandex Search API and YandexGPT. Web search and generative AI search with structured JSON output. Designed for use by scripts and AI agents.
+
+## Install
+
+```
+uv tool install yandex-search
+```
+
+## Setup
+
+Option 1 (recommended):
+```
+mkdir -p ~/.search-api
+echo '{"apiKey": "your-key", "folderId": "your-folder-id"}' > ~/.search-api/config.json
+```
+
+Option 2 (env vars):
+```
+export YANDEX_API_KEY=your-key
+export YANDEX_FOLDER_ID=your-folder-id
+```
+
+Requires a Yandex Cloud account with Search API enabled: https://yandex.cloud/en/docs/search-api/quickstart
+
+## Commands
+
+- `yandex-search <query>` — web search. Flags: --json, --num-results, --type (ru|com|tr|kk|be|uz), --region, --page, --site
+- `yandex-gen <query>` — generative search (YandexGPT). Flags: --json, --site
+
+## JSON output
+
+yandex-search returns: [{title, url, domain, date, passages[]}]
+yandex-gen returns: {message{content, role}, sources[{used, title, url}], isAnswerRejected, fixedMisspellQuery}
+
+## Quick examples
+
+```
+yandex-search "smart city digital platform" --json
+yandex-search "query" --site habr.com --json
+yandex-gen "explain microservices vs monolith" --json
+yandex-search "query" --json | jq -r '.[].url'
+```
+
+## Links
+
+- GitHub: https://github.com/davidparker7966-design/yandex-search
+- PyPI: https://pypi.org/project/yandex-search/
+- Yandex Search API docs: https://yandex.cloud/en/docs/search-api/
+- Full CLI docs: https://github.com/davidparker7966-design/yandex-search/blob/main/docs/USAGE.md
+- For agents: https://github.com/davidparker7966-design/yandex-search/blob/main/AGENTS.md

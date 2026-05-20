@@ -1,11 +1,11 @@
 <div align="center">
 
-[English](docs/README.en.md)
+[![ru](https://img.shields.io/badge/lang-ru-red.svg)](README.ru.md)
 
 <!--
-  ОБЛОЖКА — сгенерируй по промпту ниже, сохрани как docs/cover.png, затем раскомментируй img ниже.
+  COVER IMAGE — generate with this prompt, save as docs/cover.png, then uncomment the img tag below.
 
-  Промпт (Midjourney / DALL-E 3 / Stable Diffusion XL):
+  Prompt (Midjourney / DALL-E 3 / Stable Diffusion XL):
   "A dark terminal window with glowing Cyrillic search results streaming across the screen,
   Moscow skyline blurred in the background at night, deep navy blue and warm orange gradient,
   minimalist developer tool aesthetic, no UI chrome, no text overlay, professional tech product,
@@ -16,7 +16,7 @@
 
 # yandex-search
 
-**CLI для [Yandex Search API](https://yandex.cloud/en/services/search-api) — веб-поиск и генеративный поиск YandexGPT из терминала.**
+**CLI for [Yandex Search API](https://yandex.cloud/en/services/search-api) and YandexGPT — web search and generative AI search from your terminal.**
 
 [![PyPI](https://img.shields.io/pypi/v/yandex-search?color=ff6a00&label=PyPI)](https://pypi.org/project/yandex-search/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-ff6a00.svg)](https://python.org)
@@ -27,106 +27,111 @@
 
 ---
 
-`yandex-search` оборачивает [Yandex Search API](https://yandex.cloud/en/services/search-api) в две команды терминала. `yandex-search` — структурированный веб-поиск с доменами, датами и сниппетами. `yandex-gen` — YandexGPT отвечает на вопросы и цитирует источники. Все команды выводят `--json` для скриптов и агентов.
+`yandex-search` wraps the [Yandex Search API](https://yandex.cloud/en/services/search-api) in two terminal commands. `yandex-search` returns structured web results — title, URL, domain, date, text snippets. `yandex-gen` uses YandexGPT to answer questions with cited sources. Both commands support `--json` for scripts and AI agents.
 
-## Запустить за 60 секунд
+## Start in 60 seconds
 
-**Шаг 1 — Установка:**
+**Step 1 — Install:**
 ```bash
 uv tool install yandex-search
 ```
 
-> Нет `uv`? Запусти `curl -LsSf https://astral.sh/uv/install.sh | sh`, или используй `pip install yandex-search`.
+> No `uv`? Run `curl -LsSf https://astral.sh/uv/install.sh | sh`, or use `pip install yandex-search`.
 
-**Шаг 2 — Настройка Yandex Cloud:**
-1. Зарегистрируйся на [cloud.yandex.ru](https://cloud.yandex.ru)
-2. Создай сервисный аккаунт и API-ключ в разделе **IAM**
-3. Включи **Yandex Search API** для своего облака ([инструкция](https://yandex.cloud/en/docs/search-api/quickstart))
-4. Скопируй **API-ключ** и **Folder ID** из консоли
+**Step 2 — Set up Yandex Cloud:**
+1. Register at [cloud.yandex.ru](https://cloud.yandex.ru)
+2. Create a service account and API key under **IAM**
+3. Enable **Yandex Search API** for your folder ([quickstart](https://yandex.cloud/en/docs/search-api/quickstart))
+4. Copy your **API key** and **Folder ID** from the console
 
-**Шаг 3 — Укажи credentials:**
+**Step 3 — Set credentials:**
 ```bash
 mkdir -p ~/.search-api
-echo '{"apiKey": "твой-ключ", "folderId": "твой-folder-id"}' > ~/.search-api/config.json
+echo '{"apiKey": "your-key", "folderId": "your-folder-id"}' > ~/.search-api/config.json
 ```
 
-> Можно также через переменные окружения: `export YANDEX_API_KEY=... && export YANDEX_FOLDER_ID=...`
+> Or via environment variables: `export YANDEX_API_KEY=... && export YANDEX_FOLDER_ID=...`
 
-**Шаг 4 — Поиск:**
+**Step 4 — Search:**
 ```bash
-yandex-search "умный город цифровая платформа"
+yandex-search "smart city digital platform"
 ```
 
-## Команды
+## Commands
 
-| Команда | Что делает |
+| Command | What it does |
 |---|---|
-| `yandex-search <запрос>` | Веб-поиск: возвращает title, URL, домен, дату, фрагменты текста. |
-| `yandex-gen <запрос>` | Генеративный поиск: YandexGPT пишет ответ с цитированием каждого источника. |
+| `yandex-search <query>` | Web search: returns title, URL, domain, date, text passages. |
+| `yandex-gen <query>` | Generative search: YandexGPT writes an answer and cites each source. |
 
-Обе команды принимают `--json` — удобно для `jq`, скриптов и AI-агентов.
+Both commands support `--json` for `jq`, scripts, and AI agents.
 
-## Примеры
+## Examples
 
 ```bash
-# Обычный поиск
-yandex-search "умный город цифровая платформа монография"
+# Web search
+yandex-search "smart city digital platform monograph"
 
-# Только с конкретного сайта
+# Restrict to a domain
 yandex-search "async python" --site habr.com
 
-# Больше результатов, поиск по .com-индексу
+# Search the .com Yandex index, more results
 yandex-search "machine learning" -t com -n 20
 
-# Генеративный ответ — YandexGPT с источниками
-yandex-gen "в чём разница между монолитом и микросервисами"
+# Generative answer with cited sources
+yandex-gen "explain the difference between monolith and microservices"
 
-# JSON: извлечь все URL
-yandex-search "запрос" --json | jq -r '.[].url'
+# JSON — extract all URLs
+yandex-search "query" --json | jq -r '.[].url'
 
-# JSON: только .gov.ru домены
-yandex-search "нормативные акты" --json \
+# JSON — filter by domain pattern
+yandex-search "regulations" --json \
   | jq '[.[] | select(.domain | test("gov\\.ru"))]'
 ```
 
-## Справочник параметров
+## Options reference
 
 **`yandex-search`**
 
-| Флаг | По умолчанию | Описание |
+| Flag | Default | Description |
 |---|---|---|
-| `-n` / `--num-results` | `10` | Количество результатов |
-| `-t` / `--type` | `ru` | Индекс: `ru` · `com` · `tr` · `kk` · `be` · `uz` |
-| `-r` / `--region` | — | Код региона (например, `213` — Москва) |
-| `-p` / `--page` | `0` | Номер страницы (с нуля) |
-| `--site` | — | Ограничить поиск доменом |
-| `--json` | off | JSON-массив: `[{title, url, domain, date, passages}]` |
+| `-n` / `--num-results` | `10` | Number of results |
+| `-t` / `--type` | `ru` | Search index: `ru` · `com` · `tr` · `kk` · `be` · `uz` |
+| `-r` / `--region` | — | Region code (e.g. `213` for Moscow) |
+| `-p` / `--page` | `0` | Page number, zero-indexed |
+| `--site` | — | Restrict results to this domain |
+| `--json` | off | JSON array: `[{title, url, domain, date, passages}]` |
 
 **`yandex-gen`**
 
-| Флаг | По умолчанию | Описание |
+| Flag | Default | Description |
 |---|---|---|
-| `--site` | — | Ограничить источники доменом |
-| `--json` | off | Сырой JSON от Яндекса |
+| `--site` | — | Restrict sources to this domain |
+| `--json` | off | Raw JSON from Yandex |
 
-## Для AI-агентов и скриптов
+## For AI agents and scripts
 
-`yandex-search` создан для вызова из AI-ассистентов (Claude Code, Codex, Cursor и др.). Все команды stateless, read-only, завершаются чисто.
+`yandex-search` is stateless, read-only, and designed to be called by AI coding assistants (Claude Code, Codex, Cursor, Windsurf, etc.).
 
 ```bash
-# Паттерн для агентов: поиск → URL → обработка
-yandex-search "монографии по теме" --json | jq -r '.[].url' | head -5
+# Search and extract URLs
+yandex-search "topic" --json | jq -r '.[].url'
 
-# Сбор результатов с нескольких страниц
+# Collect across multiple pages
 for page in 0 1 2; do
-  yandex-search "запрос" -p $page --json
+  yandex-search "query" -p $page --json
 done | jq -s 'add'
+
+# Generative answer as JSON
+yandex-gen "question" --json | jq '.message.content'
 ```
 
-→ **[Полная документация](docs/USAGE.md)** — все флаги, форматы вывода и примеры скриптов.
+See [AGENTS.md](AGENTS.md) for JSON schemas, all flags, and agent-ready patterns.
+
+→ **[Full documentation](docs/USAGE.md)**
 
 ---
 
 <div align="center">
-<sub>Работает на <a href="https://yandex.cloud/en/services/search-api">Yandex Search API</a> · MIT License · <a href="https://github.com/davidparker7966-design/yandex-search/issues">Сообщить о проблеме</a></sub>
+<sub>Built on <a href="https://yandex.cloud/en/services/search-api">Yandex Search API</a> · MIT License · <a href="https://github.com/davidparker7966-design/yandex-search/issues">Report an issue</a></sub>
 </div>
